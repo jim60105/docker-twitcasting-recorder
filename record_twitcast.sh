@@ -49,10 +49,6 @@ while true; do
         -d "$_body" "$DISCORD_WEBHOOK"
   fi
 
-  # Also record low resolution stream simultaneously as backup
-  M3U8_URL="http://twitcasting.tv/$1/metastream.m3u8?video=1"
-  ffmpeg -i "$M3U8_URL" -codec copy -f mpegts "/download/m3u8_${FNAME}.ts" &
-
   # Start recording
   # docker run --rm --name "record_livedl" -v "${ARCHIVE}:/livedl" ghcr.io/jim60105/livedl:my-docker-build "https://twitcasting.tv/$1" -tcas -tcas-retry=on -tcas-retry-interval 30
   python /main.py --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" -o "/download/ws_${FNAME}.ts" $1

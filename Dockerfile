@@ -1,4 +1,4 @@
-FROM python:alpine
+FROM python:3.10-alpine
 
 WORKDIR /
 COPY twitcasting-recorder/requirements.txt .

@@ -8,6 +8,29 @@ fi
 
 INTERVAL="${3:-10}"
 
+# Discord message with mention role
+if [[ -n "${DISCORD_WEBHOOK}" ]]; then
+  _body="{
+  \"content\": \"${DISCORD_MENTION} Twitcasting monitor start! \nhttps://twitcasting.tv/${1}/\",
+  \"embeds\": [],
+  \"components\": [
+    {
+      \"type\": 1,
+      \"components\": [
+        {
+          \"type\": 2,
+          \"style\": 5,
+          \"label\": \"Twitcasting GO\",
+          \"url\": \"https://twitcasting.tv/${1}/\"
+        }
+      ]
+    }
+  ]
+}"
+
+  curl -s -X POST -H 'Content-type: application/json' -d "$_body" "$DISCORD_WEBHOOK"
+fi
+
 while true; do
   # Monitor live streams of specific user
   while true; do
@@ -25,8 +48,6 @@ while true; do
   # Discord message with mention role
   if [[ -n "${DISCORD_WEBHOOK}" ]]; then
     _body="{
-  \"username\": \"\",
-  \"avatar_url\": \"\",
   \"content\": \"${DISCORD_MENTION} Twitcasting Live Begins! \nhttps://twitcasting.tv/${1}/\",
   \"embeds\": [],
   \"components\": [
@@ -56,8 +77,6 @@ while true; do
   # Discord message with mention role
   if [[ -n "${DISCORD_WEBHOOK}" ]]; then
     _body="{
-  \"username\": \"\",
-  \"avatar_url\": \"\",
   \"content\": \"Twitcasting Live is over! \nhttps://twitcasting.tv/${1}/\",
   \"embeds\": [],
   \"components\": [

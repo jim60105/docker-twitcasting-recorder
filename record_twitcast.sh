@@ -1,17 +1,36 @@
 #!/bin/bash
 # TwitCasting Live Stream Recorder
 
-if [[ -z "$1" ]]; then
+if [[ -z "${1}" ]]; then
   echo "usage: $0 twitcasting_id [loop|once] [interval]"
   exit 1
 fi
 
-INTERVAL="${3:-10}"
+ID="${1}"
+shift
+
+if [[ "${2}" == "loop" || "${2}" == "once" ]]; then
+  LOOP="${2}"
+  shift
+fi
+
+# Check if the next argument is a number and store it into INTERVAL
+if [[ "$1" =~ ^[0-9]+$ ]]; then
+  INTERVAL="$1"
+  shift
+else
+  INTERVAL=10
+fi
+
+echo "ID: ${ID}"
+echo "LOOP: ${LOOP}"
+echo "INTERVAL: ${INTERVAL}"
+echo "ARGS: $*"
 
 # Discord message with mention role
 if [[ -n "${DISCORD_WEBHOOK}" ]]; then
   _body="{
-  \"content\": \"${DISCORD_MENTION} Twitcasting monitor start! \nhttps://twitcasting.tv/${1}/\",
+  \"content\": \"${DISCORD_MENTION} Twitcasting monitor start! \nhttps://twitcasting.tv/${ID}/\",
   \"embeds\": [],
   \"components\": [
     {
@@ -21,7 +40,7 @@ if [[ -n "${DISCORD_WEBHOOK}" ]]; then
           \"type\": 2,
           \"style\": 5,
           \"label\": \"Twitcasting GO\",
-          \"url\": \"https://twitcasting.tv/${1}/\"
+          \"url\": \"https://twitcasting.tv/${ID}/\"
         }
       ]
     }
@@ -34,12 +53,12 @@ fi
 while true; do
   # Monitor live streams of specific user
   while true; do
-    LOG_PREFIX=$(date +"[%m/%d/%y %H:%M:%S] [twitcasting@$1] ")
-    STREAM_API="https://twitcasting.tv/streamserver.php?target=$1&mode=client"
+    LOG_PREFIX=$(date +"[%m/%d/%y %H:%M:%S] [twitcasting@${ID}] ")
+    STREAM_API="https://twitcasting.tv/streamserver.php?target=${ID}&mode=client"
     (curl -s "$STREAM_API" | grep -q '"live":true') && break
 
     echo "$LOG_PREFIX [VRB] The stream is not available now. Retry after $INTERVAL seconds..."
-    sleep $INTERVAL
+    sleep "$INTERVAL"
   done
 
   # Record using MPEG-2 TS format to avoid broken file caused by interruption
@@ -48,7 +67,7 @@ while true; do
   # Discord message with mention role
   if [[ -n "${DISCORD_WEBHOOK}" ]]; then
     _body="{
-  \"content\": \"${DISCORD_MENTION} Twitcasting Live Begins! \nhttps://twitcasting.tv/${1}/\",
+  \"content\": \"${DISCORD_MENTION} Twitcasting Live Begins! \nhttps://twitcasting.tv/${ID}/\",
   \"embeds\": [],
   \"components\": [
     {
@@ -58,7 +77,7 @@ while true; do
           \"type\": 2,
           \"style\": 5,
           \"label\": \"Twitcasting GO\",
-          \"url\": \"https://twitcasting.tv/${1}/\"
+          \"url\": \"https://twitcasting.tv/${ID}/\"
         }
       ]
     }
@@ -70,14 +89,14 @@ while true; do
   fi
 
   # Start recording
-  python /main.py --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" "$1"
-  LOG_PREFIX=$(date +"[%m/%d/%y %H:%M:%S] [twitcasting@$1] ")
-  echo "$LOG_PREFIX [INFO] Stop recording $1"
+  python /main.py "$@" "${ID}"
+  LOG_PREFIX=$(date +"[%m/%d/%y %H:%M:%S] [twitcasting@${ID}] ")
+  echo "$LOG_PREFIX [INFO] Stop recording ${ID}"
 
   # Discord message with mention role
   if [[ -n "${DISCORD_WEBHOOK}" ]]; then
     _body="{
-  \"content\": \"Twitcasting Live is over! \nhttps://twitcasting.tv/${1}/\",
+  \"content\": \"Twitcasting Live is over! \nhttps://twitcasting.tv/${ID}/\",
   \"embeds\": [],
   \"components\": [
     {
@@ -87,7 +106,7 @@ while true; do
           \"type\": 2,
           \"style\": 5,
           \"label\": \"Check live history\",
-          \"url\": \"https://twitcasting.tv/${1}/show/\"
+          \"url\": \"https://twitcasting.tv/${ID}/show/\"
         }
       ]
     }
@@ -98,5 +117,5 @@ while true; do
   fi
 
   # Exit if we just need to record current stream
-  [[ "$2" == "once" ]] && break
+  [[ "$LOOP" == "once" ]] && break
 done

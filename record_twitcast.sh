@@ -89,7 +89,10 @@ while true; do
   fi
 
   # Start recording
-  python /main.py "$@" "${ID}"
+  ARGS="$*"
+  [ -z "$ARGS" ] && ARGS="${ID}" || ARGS="$ARGS ${ID}"
+  python /main.py "$ARGS"
+
   LOG_PREFIX=$(date +"[%m/%d/%y %H:%M:%S] [twitcasting@${ID}] ")
   echo "$LOG_PREFIX [INFO] Stop recording ${ID}"
 

@@ -9,8 +9,8 @@ fi
 ID="${1}"
 shift
 
-if [[ "${2}" == "loop" || "${2}" == "once" ]]; then
-  LOOP="${2}"
+if [[ "${1}" == "loop" || "${1}" == "once" ]]; then
+  LOOP="${1}"
   shift
 fi
 
@@ -63,6 +63,8 @@ while true; do
 
   # Record using MPEG-2 TS format to avoid broken file caused by interruption
   echo "$LOG_PREFIX [INFO] Start recording..."
+  echo "ID: ${ID}"
+  echo "ARGS: $*"
 
   # Discord message with mention role
   if [[ -n "${DISCORD_WEBHOOK}" ]]; then

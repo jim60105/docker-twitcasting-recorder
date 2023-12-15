@@ -91,9 +91,12 @@ while true; do
   fi
 
   # Start recording
-  ARGS="$*"
-  [ -z "$ARGS" ] && ARGS="${ID}" || ARGS="$ARGS ${ID}"
-  python /main.py "$ARGS"
+  if [ -z "$*" ]; then
+    python /main.py "${ID}"
+  else
+    # shellcheck disable=SC2086
+    python /main.py "$@" "${ID}"
+  fi
 
   LOG_PREFIX=$(date +"[%m/%d/%y %H:%M:%S] [twitcasting@${ID}] ")
   echo "$LOG_PREFIX [INFO] Stop recording ${ID}"

@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 # TwitCasting Live Stream Recorder
 
-if [[ -z "${1}" ]]; then
+if [ -z "${1}" ]; then
   echo "usage: $0 twitcasting_id [loop|once] [interval]"
   exit 1
 fi
@@ -9,18 +9,18 @@ fi
 ID="${1}"
 shift
 
-if [[ "${1}" == "loop" || "${1}" == "once" ]]; then
+if [ "${1}" = "loop" ] || [ "${1}" = "once" ]; then
   LOOP="${1}"
   shift
 fi
 
-# Check if the next argument is a number and store it into INTERVAL
-if [[ "$1" =~ ^[0-9]+$ ]]; then
+case $1 in
+'' | *[!0-9]*) INTERVAL=10 ;; # Not a number, use default
+*)
   INTERVAL="$1"
   shift
-else
-  INTERVAL=10
-fi
+  ;; # It's a number, proceed as normal
+esac
 
 echo "ID: ${ID}"
 echo "LOOP: ${LOOP}"
@@ -28,7 +28,7 @@ echo "INTERVAL: ${INTERVAL}"
 echo "ARGS: $*"
 
 # Discord message with mention role
-if [[ -n "${DISCORD_WEBHOOK}" ]]; then
+if [ -n "${DISCORD_WEBHOOK}" ]; then
   _body="{
   \"content\": \"${DISCORD_MENTION} Twitcasting monitor start! \nhttps://twitcasting.tv/${ID}/\",
   \"embeds\": [],
@@ -67,7 +67,7 @@ while true; do
   echo "ARGS: $*"
 
   # Discord message with mention role
-  if [[ -n "${DISCORD_WEBHOOK}" ]]; then
+  if [ -n "${DISCORD_WEBHOOK}" ]; then
     _body="{
   \"content\": \"${DISCORD_MENTION} Twitcasting Live Begins! \nhttps://twitcasting.tv/${ID}/\",
   \"embeds\": [],
@@ -91,18 +91,18 @@ while true; do
   fi
 
   # Start recording
+  SCRIPT_DIR=$(dirname "$0")
   if [ -z "$*" ]; then
-    python /main.py "${ID}"
+    python "$SCRIPT_DIR/main.py" "${ID}"
   else
-    # shellcheck disable=SC2086
-    python /main.py "$@" "${ID}"
+    python "$SCRIPT_DIR/main.py" "$@" "${ID}"
   fi
 
   LOG_PREFIX=$(date +"[%m/%d/%y %H:%M:%S] [twitcasting@${ID}] ")
   echo "$LOG_PREFIX [INFO] Stop recording ${ID}"
 
   # Discord message with mention role
-  if [[ -n "${DISCORD_WEBHOOK}" ]]; then
+  if [ -n "${DISCORD_WEBHOOK}" ]; then
     _body="{
   \"content\": \"Twitcasting Live is over! \nhttps://twitcasting.tv/${ID}/\",
   \"embeds\": [],
@@ -125,5 +125,5 @@ while true; do
   fi
 
   # Exit if we just need to record current stream
-  [[ "$LOOP" == "once" ]] && break
+  [ "$LOOP" = "once" ] && break
 done

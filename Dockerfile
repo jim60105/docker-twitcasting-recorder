@@ -1,8 +1,11 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.10-alpine as python
+FROM python:3.11-alpine as python
 
 # Setup venv
+RUN ln -s /usr/bin/python3.11 /usr/bin/python3 && \
+    ln -s /usr/bin/python3.11 /usr/bin/python && \
+    ln -s /usr/bin/pip3.11 /usr/bin/pip3
 RUN python3 -m venv /venv --upgrade-deps
 ENV PATH="/venv/bin:$PATH"
 

@@ -16,6 +16,8 @@ docker run --rm -v ${PWD}:/download ghcr.io/jim60105/twitcasting-recorder [TWITC
 docker run --rm -v ${PWD}:/download ghcr.io/jim60105/twitcasting-recorder [TWITCASTING_ID] loop 60
 ```
 
+Also available at [quay.io](https://quay.io/repository/jim60105/twitcasting-recorder?tab=tags)
+
 ### Run once
 
 Use `once` as the argument to run the script once and exit.

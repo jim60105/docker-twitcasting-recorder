@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 ARG UID=1001
 
-FROM python:3.11-alpine as build
+FROM python:3.13.0a3-alpine as build
 
 # RUN mount cache for multi-arch: https://github.com/docker/buildx/issues/549#issuecomment-1788297892
 ARG TARGETARCH
@@ -24,7 +24,7 @@ RUN --mount=type=cache,id=pip-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/r
     find "/root/.local" -name '*.pyc' -print0 | xargs -0 rm -f || true ; \
     find "/root/.local" -type d -name '__pycache__' -print0 | xargs -0 rm -rf || true ;
 
-FROM python:3.11-alpine as final
+FROM python:3.13.0a3-alpine as final
 
 ARG UID
 

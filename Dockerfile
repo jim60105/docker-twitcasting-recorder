@@ -43,18 +43,19 @@ RUN addgroup -g $UID $UID && \
 
 # Copy dist and support arbitrary user ids (OpenShift best practice)
 # https://docs.openshift.com/container-platform/4.14/openshift_images/create-images.html#use-uid_create-images
-COPY --chown=$UID:0 --chmod=774 \
+COPY --chown=$UID:0 --chmod=775 \
     --from=build /root/.local /home/$UID/.local
 ENV PATH="/home/$UID/.local/bin:$PATH"
 
-COPY --chown=$UID:0 --chmod=774 \
+COPY --chown=$UID:0 --chmod=775 \
     record_twitcast.sh /app/record_twitcast.sh
-COPY --chown=$UID:0 --chmod=774 \
+COPY --chown=$UID:0 --chmod=775 \
     twitcasting-recorder/main.py /app/main.py
 
-USER $UID
 WORKDIR /
+RUN install -d -m 775 -o $UID -g 0 /download
 VOLUME [ "/download" ]
+USER $UID
 
 STOPSIGNAL SIGINT
 ENTRYPOINT [ "dumb-init", "--", "/bin/sh", "/app/record_twitcast.sh" ]

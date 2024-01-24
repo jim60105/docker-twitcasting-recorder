@@ -12,8 +12,8 @@ The standard operation is to monitor the channel, checking every 10 seconds, and
 To modify the interval frequency, you can specify the argument such as `loop 60`.
 
 ```bash
-docker run --rm -v ${PWD}:/download ghcr.io/jim60105/twitcasting-recorder [TWITCASTING_ID]
-docker run --rm -v ${PWD}:/download ghcr.io/jim60105/twitcasting-recorder [TWITCASTING_ID] loop 60
+docker run --rm -v ".:/download" ghcr.io/jim60105/twitcasting-recorder [TWITCASTING_ID]
+docker run --rm -v ".:/download" ghcr.io/jim60105/twitcasting-recorder [TWITCASTING_ID] loop 60
 ```
 
 Also available at [quay.io](https://quay.io/repository/jim60105/twitcasting-recorder?tab=tags)
@@ -23,7 +23,7 @@ Also available at [quay.io](https://quay.io/repository/jim60105/twitcasting-reco
 Use `once` as the argument to run the script once and exit.
 
 ```bash
-docker run --rm -v ${PWD}:/download ghcr.io/jim60105/twitcasting-recorder [TWITCASTING_ID] once
+docker run --rm -v ".:/download" ghcr.io/jim60105/twitcasting-recorder [TWITCASTING_ID] once
 ```
 
 ### Run once and specify output file name
@@ -31,7 +31,7 @@ docker run --rm -v ${PWD}:/download ghcr.io/jim60105/twitcasting-recorder [TWITC
 Any other arguments will be passed to the underlying python script. Check [TwitCasting Recorder](https://github.com/jim60105/twitcasting-recorder?tab=readme-ov-file#usage) for more information.
 
 ```bash
-docker run --rm -v ${PWD}:/download ghcr.io/jim60105/twitcasting-recorder [TWITCASTING_ID] once -o [OUTPUT_FILE_NAME]
+docker run --rm -v ".:/download" ghcr.io/jim60105/twitcasting-recorder [TWITCASTING_ID] once -o [OUTPUT_FILE_NAME]
 ```
 
 ## Discord webhook notification

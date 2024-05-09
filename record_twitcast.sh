@@ -93,9 +93,9 @@ while true; do
   # Start recording
   SCRIPT_DIR=$(dirname "$0")
   if [ -z "$*" ]; then
-    python "$SCRIPT_DIR/main.py" "${ID}"
+    "$SCRIPT_DIR/main.bin" "${ID}"
   else
-    python "$SCRIPT_DIR/main.py" "$@" "${ID}"
+    "$SCRIPT_DIR/main.bin" "$@" "${ID}"
   fi
 
   LOG_PREFIX=$(date +"[%m/%d/%y %H:%M:%S] [twitcasting@${ID}] ")

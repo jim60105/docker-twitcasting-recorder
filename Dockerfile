@@ -6,7 +6,7 @@ ARG RELEASE=0
 ########################################
 # Build stage
 ########################################
-FROM python:3.12-slim as build
+FROM python:slim-bookworm AS build
 
 # RUN mount cache for multi-arch: https://github.com/docker/buildx/issues/549#issuecomment-1788297892
 ARG TARGETARCH
@@ -32,7 +32,7 @@ RUN --mount=type=cache,id=pip-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/r
 ########################################
 # Compile with Nuitka
 ########################################
-FROM build as compile
+FROM build AS compile
 
 ARG TARGETARCH
 ARG TARGETVARIANT
@@ -84,7 +84,7 @@ COPY --link --chown=$UID:0 --chmod=775 --from=compile /compilationreport.xml /
 ########################################
 # Final stage
 ########################################
-FROM debian:bookworm-slim as final
+FROM debian:bookworm-slim AS final
 
 # Install runtime dependencies
 RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/var/cache/apt \
@@ -93,11 +93,11 @@ RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/v
     libxcb1 curl ca-certificates
 
 # ffmpeg
-COPY --link --from=ghcr.io/jim60105/static-ffmpeg-upx:7.0-1 /ffmpeg /usr/bin/
-# COPY --link --from=ghcr.io/jim60105/static-ffmpeg-upx:7.0-1 /ffprobe /usr/bin/
+COPY --link --from=ghcr.io/jim60105/static-ffmpeg-upx:7.1.1 /ffmpeg /usr/bin/
+# COPY --link --from=ghcr.io/jim60105/static-ffmpeg-upx:7.1.1 /ffprobe /usr/bin/
 
 # dumb-init
-COPY --link --from=ghcr.io/jim60105/static-ffmpeg-upx:7.0-1 /dumb-init /usr/bin/
+COPY --link --from=ghcr.io/jim60105/static-ffmpeg-upx:7.1.1 /dumb-init /usr/bin/
 
 # Create directories with correct permissions
 ARG UID

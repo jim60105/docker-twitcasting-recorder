@@ -58,6 +58,7 @@ runs:
         password: ${{ inputs.QUAY_TOKEN }}
 
     - name: Build and push
+      id: build_push
       uses: docker/build-push-action@v5
       with:
         context: .
@@ -75,3 +76,21 @@ runs:
         cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/twitcasting-recorder:cache,mode=max
         sbom: true
         provenance: true
+
+    - name: Attest Docker Hub image
+      uses: actions/attest-build-provenance@v2
+      with:
+        subject-name: ${{ inputs.DOCKERHUB_USERNAME }}/twitcasting-recorder
+        subject-digest: ${{ steps.build_push.outputs.digest }}
+
+    - name: Attest GHCR image
+      uses: actions/attest-build-provenance@v2
+      with:
+        subject-name: ghcr.io/${{ github.repository_owner }}/twitcasting-recorder
+        subject-digest: ${{ steps.build_push.outputs.digest }}
+
+    - name: Attest Quay image
+      uses: actions/attest-build-provenance@v2
+      with:
+        subject-name: quay.io/${{ github.repository_owner }}/twitcasting-recorder
+        subject-digest: ${{ steps.build_push.outputs.digest }}
